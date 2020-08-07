@@ -44,10 +44,15 @@ func _on_data():
 	#print("Got data from server: ", _client.get_peer(1).get_packet().get_string_from_utf8())
 	var packet = _client.get_peer(1).get_packet().get_string_from_utf8()
 	if JSON.parse(packet).result.type == "id":
-		id = JSON.parse(packet).id
+		var new_id = JSON.parse(packet).result.id
+		if not new_id == null:
+			id = new_id
 		emit_signal("connected")
 	else:
-		emit_signal("data_get", _client.get_peer(1).get_packet().get_string_from_utf8())
+		emit_signal("data_get", packet)
+
+func send_data(data):
+	_client.get_peer(1).put_packet(data.to_utf8())
 
 func _process(_delta):
 	# Call this in _process or _physics_process. Data transfer, and signals

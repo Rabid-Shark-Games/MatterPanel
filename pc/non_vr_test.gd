@@ -4,13 +4,14 @@ extends Spatial
 # Declare member variables here. Examples:
 # var a = 2
 # var b = "text"
-
+export var ws = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	WebSocket.connect_ws()
-	WebSocket.connect("data_get", self, "_on_data_get")
-	WebSocket.connect("connected", self, "_on_connected")
+	if ws:
+		WebSocket.connect_ws()
+		WebSocket.connect("data_get", self, "_on_data_get")
+		WebSocket.connect("connected", self, "_on_connected")
 
 func _on_data_get(data):
 	print(data)

@@ -13,11 +13,13 @@ var connections = []
 app.ws('/api', (ws, req) => {
     if (connections.length > 8) return;
 
-    connections.push(ws);
+    var id = uuidv4();
+
+    connections.push({ws, id});
 
     ws.send(JSON.stringify({
         type: "id",
-        id: uuidv4()
+        id
     }));
 
     ws.on('message', msg => {
@@ -25,23 +27,23 @@ app.ws('/api', (ws, req) => {
 
         if (parse.type == "button" || parse.type == "unbutton") {
             connections.forEach(conn => {
-                conn.send(msg);
+                conn.ws.send(msg);
             });
         } else if (parse.type == "get_peers") {
             ws.send(JSON.stringify({
                 "type": "got_peers",
                 "peers": connections.filter(conn =>
-                    conn != ws
-                ).map(conn => {
+                    conn.ws != ws
+                ).map(conn =>
                     conn.id
-                })
+                )
             }));
         }
     });
 
     ws.on('close', () => {
         connections = connections.filter(conn =>
-            conn != ws
+            conn.ws != ws
         );
     });
 });

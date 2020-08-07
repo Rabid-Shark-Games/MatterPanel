@@ -73,12 +73,13 @@
         var id = -1;
 
         ws.onmessage = msg => {
-            var msg = JSON.parse(msg.data);
+            var msg_j = JSON.parse(msg.data);
 
-            console.log(msg);
+            console.log(msg_j);
 
-            if (msg.type = "id") {
-                id = msg.id;
+            if (msg_j.type == "id") {
+                console.log("UH OH")
+                id = msg_j.id;
             }
         }
 
@@ -103,6 +104,7 @@
                         id,
                         button: el.id
                     }));
+                    pressed = false;
                     el.classList.remove("button_pressed");
                 }
             }

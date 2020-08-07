@@ -5,20 +5,20 @@
 [ext_resource path="res://addons/godot-xr-tools/functions/Function_pointer.tscn" type="PackedScene" id=3]
 [ext_resource path="res://addons/godot-xr-tools/objects/Viewport_2D_in_3D.tscn" type="PackedScene" id=4]
 
-[sub_resource type="QuadMesh" id=3]
+[sub_resource type="QuadMesh" id=1]
 resource_local_to_scene = true
 size = Vector2( 3, 2 )
 
-[sub_resource type="ViewportTexture" id=4]
+[sub_resource type="ViewportTexture" id=2]
 
-[sub_resource type="SpatialMaterial" id=5]
+[sub_resource type="SpatialMaterial" id=3]
 resource_local_to_scene = true
 flags_transparent = true
 flags_unshaded = true
 params_cull_mode = 2
-albedo_texture = SubResource( 4 )
+albedo_texture = SubResource( 2 )
 
-[sub_resource type="BoxShape" id=6]
+[sub_resource type="BoxShape" id=4]
 resource_local_to_scene = true
 extents = Vector3( 1.5, 1, 0.01 )
 
@@ -41,15 +41,15 @@ controller_id = 2
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -3 )
 
 [node name="Screen" parent="Viewport2Din3D" index="0"]
-mesh = SubResource( 3 )
-material/0 = SubResource( 5 )
+mesh = SubResource( 1 )
+material/0 = SubResource( 3 )
 
 [node name="StaticBody" parent="Viewport2Din3D" index="1"]
 collision_layer = 15
 viewport_size = Vector2( 300, 200 )
 
 [node name="CollisionShape" parent="Viewport2Din3D/StaticBody" index="0"]
-shape = SubResource( 6 )
+shape = SubResource( 4 )
 
 [node name="Button" type="Button" parent="Viewport2Din3D/Viewport" index="0"]
 margin_left = 110.0
