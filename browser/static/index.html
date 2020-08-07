@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MatterPanel Controller</title>
+    <style>
+        body {
+            background-color: #2E3440;
+        }
+        .button {
+            width: 150px;
+            height: 150px;
+            background-color: #4C566A;
+            text-align: center;
+            display: inline-block;
+        }
+        .button_pressed {
+            background-color: #3B4252;
+        }
+        .button>svg {
+            width: 100%;
+            height: 100%;
+        }
+        .padding {
+            width: 150px;
+            height: 150px;
+            background-color: #2E3440;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="padding"></div>
+    <div class="button" id="up">
+        <svg viewbox="0 0 6 6">
+            <polygon
+                points="1,5 3,1 5,5"
+                style="fill: none; stroke: #A3BE8C; stroke-width:1"
+            />
+        </svg>
+    </div><br/>
+    <div class="button" id="left">
+        <svg viewbox="0 0 6 6">
+            <polygon
+                points="1,3 5,1 5,5"
+                style="fill: none; stroke: #A3BE8C; stroke-width:1"
+            />
+        </svg>
+    </div>
+    <div class="padding"></div>
+    <div class="button" id="right">
+        <svg viewbox="0 0 6 6">
+            <polygon
+                points="1,1 5,3 1,5"
+                style="fill: none; stroke: #A3BE8C; stroke-width:1"
+            />
+        </svg>
+    </div><br/>
+    <div class="padding"></div>
+    <div class="button" id="down">
+        <svg viewbox="0 0 6 6">
+            <polygon
+                points="3,5 5,1 1,1"
+                style="fill: none; stroke: #A3BE8C; stroke-width:1"
+            />
+        </svg>
+    </div>
+    
+    <script>
+        var ws = new WebSocket("ws" + location.origin.substr(4) + "/api");
+
+        var id = -1;
+
+        ws.onmessage = msg => {
+            var msg = JSON.parse(msg.data);
+
+            console.log(msg);
+
+            if (msg.type = "id") {
+                id = msg.id;
+            }
+        }
+
+        Array.from(document.getElementsByClassName("button")).forEach(el => {
+            var pressed = false;
+
+            el.onmousedown = () => {
+                if (!pressed) {
+                    ws.send(JSON.stringify({
+                        type: "button",
+                        id,
+                        button: el.id
+                    }));
+                    pressed = true;
+                    el.classList.add("button_pressed");
+                }
+            }
+            el.onmouseup = () => {
+                if (pressed) {
+                    ws.send(JSON.stringify({
+                        type: "unbutton",
+                        id,
+                        button: el.id
+                    }));
+                    el.classList.remove("button_pressed");
+                }
+            }
+        });
+    </script>
+</body>
+</html>

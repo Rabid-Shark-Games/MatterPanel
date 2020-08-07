@@ -16,7 +16,16 @@ _global_script_class_icons={
 [application]
 
 config/name="MatterPanel"
+run/main_scene="res://menu.tscn"
 config/icon="res://icon.png"
+
+[autoload]
+
+WebSocket="*res://WebSocket.gd"
+
+[gdnative]
+
+singletons=[ "res://addons/godot-openvr/godot_openvr.gdnlib" ]
 
 [rendering]
 
