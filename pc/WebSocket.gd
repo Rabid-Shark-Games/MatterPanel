@@ -43,13 +43,14 @@ func _on_data():
 	# using the MultiplayerAPI.
 	#print("Got data from server: ", _client.get_peer(1).get_packet().get_string_from_utf8())
 	var packet = _client.get_peer(1).get_packet().get_string_from_utf8()
-	if JSON.parse(packet).result.type == "id":
-		var new_id = JSON.parse(packet).result.id
+	var parse = JSON.parse(packet).result
+	if parse.type == "id":
+		var new_id = parse.id
 		if not new_id == null:
 			id = new_id
 		emit_signal("connected")
 	else:
-		emit_signal("data_get", packet)
+		emit_signal("data_get", parse)
 
 func send_data(data):
 	_client.get_peer(1).put_packet(data.to_utf8())

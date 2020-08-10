@@ -9,9 +9,10 @@ express_ws(app);
 app.use(express.static('static'));
 
 var connections = []
+var start_id = null
 
 app.ws('/api', (ws, req) => {
-    if (connections.length > 8) return;
+    if (connections.length > 4 || start_id != null) return;
 
     var id = uuidv4();
 
@@ -21,6 +22,14 @@ app.ws('/api', (ws, req) => {
         type: "id",
         id
     }));
+
+    connections.filter(conn =>
+        conn.ws != ws
+    ).forEach(conn => {
+        conn.ws.send(JSON.stringify({
+            "type": "player_join"
+        }));
+    });
 
     ws.on('message', msg => {
         var parse = JSON.parse(msg);
@@ -38,13 +47,32 @@ app.ws('/api', (ws, req) => {
                     conn.id
                 )
             }));
+        } else if (parse.type == "start_game") {
+            start_id = parse.id;
         }
     });
 
     ws.on('close', () => {
-        connections = connections.filter(conn =>
-            conn.ws != ws
-        );
+        var id = null
+        connections = connections.filter(conn => {
+            if (conn.ws == ws) {
+                id = conn.id;
+
+                if (start_id == conn.id) {
+                    start_id = null;
+                }
+                return false;
+            }
+            return true;
+        });
+        connections.map(conn =>
+            conn.ws
+        ).forEach(conn => {
+            conn.send(JSON.stringify({
+                "type": "leave",
+                "id": id
+            }));
+        });
     });
 });
 

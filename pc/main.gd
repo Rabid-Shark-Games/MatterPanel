@@ -13,9 +13,21 @@ func _ready():
 	WebSocket.connect("connected", self, "_on_connected")
 
 func _on_data_get(data):
-	print(data)
+	if data.type == "got_peers":
+		for peer in data.peers:
+			var player = $MeshInstance.duplicate()
+			add_child(player)
+			player.visible = true
+			player.name = peer
+			player.start(peer)
+	else:
+		print(data)
 
 func _on_connected():
+	WebSocket.send_data(JSON.print({
+		"type": "start_game",
+		"id": WebSocket.id
+	}))
 	WebSocket.send_data(JSON.print({
 		"type": "get_peers",
 		"id": WebSocket.id
