@@ -12,9 +12,10 @@ var connections = []
 var start_id = null
 
 app.ws('/api', (ws, req) => {
-    if (connections.length > 4 || start_id != null) return;
+    if ((connections.length >= 4 && !req.query.type == "host")|| start_id != null) return;
 
     var id = uuidv4();
+    var index = connections.length
 
     connections.push({ws, id});
 
@@ -49,6 +50,11 @@ app.ws('/api', (ws, req) => {
             }));
         } else if (parse.type == "start_game") {
             start_id = parse.id;
+        } else if (parse.type == "get_color") {
+            ws.send(JSON.stringify({
+                type: "color",
+                color: index
+            }))
         }
     });
 

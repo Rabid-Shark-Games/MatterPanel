@@ -1,6 +1,6 @@
 extends Node
 
-export var websocket_url = "ws://localhost:8080/api"
+export var websocket_url = "ws://localhost:8080/api?type=host"
 # export var websocket_url = "ws://echo.websocket.org"
 
 # Our WebSocketClient instance

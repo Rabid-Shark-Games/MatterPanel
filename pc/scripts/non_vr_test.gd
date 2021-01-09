@@ -16,10 +16,13 @@ func _ready():
 func _on_data_get(data):
 	if data.type == "got_peers":
 		print(data.peers)
+		if (data.peers.size() > 0):
+			$player1.start(data.peers[0])
 	else:
 		print(data)
 
 func _on_connected():
+	print("connected")
 	WebSocket.send_data(JSON.print({
 		"type": "start_game",
 		"id": WebSocket.id
@@ -30,5 +33,5 @@ func _on_connected():
 	}))
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+#func _process(_delta):
+#	print("aaa")

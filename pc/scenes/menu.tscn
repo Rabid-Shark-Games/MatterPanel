@@ -1,9 +1,9 @@
 [gd_scene load_steps=9 format=2]
 
-[ext_resource path="res://menu.gd" type="Script" id=1]
-[ext_resource path="res://addons/godot-openvr/scenes/ovr_controller.tscn" type="PackedScene" id=2]
+[ext_resource path="res://scripts/menu.gd" type="Script" id=1]
+[ext_resource path="res://addons/godot-xr-tools/objects/Viewport_2D_in_3D.tscn" type="PackedScene" id=2]
 [ext_resource path="res://addons/godot-xr-tools/functions/Function_pointer.tscn" type="PackedScene" id=3]
-[ext_resource path="res://addons/godot-xr-tools/objects/Viewport_2D_in_3D.tscn" type="PackedScene" id=4]
+[ext_resource path="res://addons/godot-openvr/scenes/ovr_controller.tscn" type="PackedScene" id=4]
 
 [sub_resource type="QuadMesh" id=1]
 resource_local_to_scene = true
@@ -30,15 +30,20 @@ script = ExtResource( 1 )
 [node name="ARVRCamera" type="ARVRCamera" parent="ARVROrigin"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
 
-[node name="OVRController_Left" parent="ARVROrigin" instance=ExtResource( 2 )]
+[node name="OVRController_Left" parent="ARVROrigin" instance=ExtResource( 4 )]
 
-[node name="OVRController_Right" parent="ARVROrigin" instance=ExtResource( 2 )]
+[node name="OVRController_Right" parent="ARVROrigin" instance=ExtResource( 4 )]
 controller_id = 2
 
 [node name="Function_pointer" parent="ARVROrigin/OVRController_Right" instance=ExtResource( 3 )]
 
-[node name="Viewport2Din3D" parent="." instance=ExtResource( 4 )]
+[node name="Viewport2Din3D" parent="." instance=ExtResource( 2 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -3 )
+screen_size = Vector2( 3, 2 )
+viewport_size = Vector2( 300, 200 )
+transparent = true
+scene = null
+collision_layer = 15
 
 [node name="Screen" parent="Viewport2Din3D" index="0"]
 mesh = SubResource( 1 )

@@ -1,0 +1,33 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://scripts/non_vr_test.gd" type="Script" id=1]
+[ext_resource path="res://scripts/Player.gd" type="Script" id=2]
+
+[sub_resource type="CubeMesh" id=1]
+
+[sub_resource type="SpatialMaterial" id=2]
+albedo_color = Color( 0.913725, 0.243137, 0.243137, 1 )
+
+[sub_resource type="BoxShape" id=3]
+
+[node name="Spatial" type="Spatial"]
+script = ExtResource( 1 )
+ws = true
+
+[node name="player1" type="RigidBody" parent="."]
+can_sleep = false
+axis_lock_linear_y = true
+script = ExtResource( 2 )
+speed = 1.0
+
+[node name="MeshInstance" type="MeshInstance" parent="player1"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10 )
+mesh = SubResource( 1 )
+material/0 = SubResource( 2 )
+
+[node name="CollisionShape" type="CollisionShape" parent="player1"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10 )
+shape = SubResource( 3 )
+
+[node name="Camera" type="Camera" parent="."]
+transform = Transform( 1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 7, 22 )

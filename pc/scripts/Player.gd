@@ -1,4 +1,4 @@
-extends MeshInstance
+extends Spatial
 
 
 # Declare member variables here. Examples:
@@ -6,6 +6,7 @@ extends MeshInstance
 # var b = "text"
 var id = null
 var buttons = []
+export var speed = 1.0
 
 # Called when the node enters the scene tree for the first time.
 func start(new_id):
@@ -27,5 +28,11 @@ func _on_data_get(data):
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+func _process(delta):
+	var moveSpeed = speed
+	if buttons.has("double"):
+		moveSpeed *= 2
+	if buttons.has("left"):
+		rotate(Vector3(0, 1, 0), -delta * moveSpeed)
+	if buttons.has("right"):
+		rotate(Vector3(0, 1, 0), delta * moveSpeed)
