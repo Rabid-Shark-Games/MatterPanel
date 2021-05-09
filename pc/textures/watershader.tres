@@ -1,0 +1,415 @@
+[gd_resource type="ShaderMaterial" load_steps=26 format=2]
+
+[sub_resource type="VisualShaderNodeScalarOp" id=1]
+default_input_values = [ 0, 0.0, 1, 0.1 ]
+
+[sub_resource type="VisualShaderNodeVectorOp" id=2]
+default_input_values = [ 0, Vector3( 0, 0, 0 ), 1, Vector3( 4, 4, 4 ) ]
+operator = 2
+
+[sub_resource type="VisualShaderNodeScalarFunc" id=3]
+function = 0
+
+[sub_resource type="VisualShaderNodeVectorOp" id=4]
+
+[sub_resource type="VisualShaderNodeScalarOp" id=5]
+default_input_values = [ 0, 0.0, 1, 0.01 ]
+operator = 2
+
+[sub_resource type="VisualShaderNodeScalarOp" id=6]
+default_input_values = [ 0, 0.0, 1, 0.5 ]
+operator = 2
+
+[sub_resource type="VisualShaderNodeScalarOp" id=7]
+default_input_values = [ 0, 0.0, 1, 0.5 ]
+operator = 6
+
+[sub_resource type="VisualShaderNodeScalarOp" id=8]
+default_input_values = [ 0, 0.0, 1, 0.5 ]
+operator = 1
+
+[sub_resource type="VisualShaderNodeScalarOp" id=9]
+default_input_values = [ 0, 0.0, 1, 4.0 ]
+operator = 2
+
+[sub_resource type="VisualShaderNodeExpression" id=10]
+size = Vector2( 855, 1325 )
+expression = "vec2 P = vec2(Pold.x,Pold.y);
+
+float K = 0.142857142857; // 1/7
+float Ko = 0.428571428571; // 3/7
+
+vec2 Pi = floor(P);
+Pi = Pi - floor(Pi * (1.0 / 289.0)) * 289.0;
+vec2 Pf = fract(P);
+vec3 oi = vec3(-1.0, 0.0, 1.0);
+vec3 of = vec3(-0.5, 0.5, 1.5);
+vec3 px = Pi.x + oi;
+px = (34.0 * px + 1.0) * px;
+px = px - floor(px * (1.0 / 289.0)) * 289.0;
+vec3 p = px.x + Pi.y + oi; // p11, p12, p13
+p = (34.0 * p + 1.0) * p;
+p = p - floor(p * (1.0 / 289.0)) * 289.0;
+vec3 ox = fract(p*K) - Ko;
+vec3 oy = floor(p*K);
+oy = oy - floor(oy * (1.0 / 7.0)) * 7.0;
+oy = oy*K-Ko;
+vec3 dx = Pf.x + 0.5 + jitter*ox;
+vec3 dy = Pf.y - of + jitter*oy;
+vec3 d1 = dx * dx + dy * dy; // d11, d12 and d13, squared
+p = px.y + Pi.y + oi; // p21, p22, p23
+p = (34.0 * p + 1.0) * p;
+p = p - floor(p * (1.0 / 289.0)) * 289.0;
+ox = fract(p*K) - Ko;
+oy = floor(p*K);
+oy = oy - floor(oy * (1.0 / 7.0)) * 7.0;
+oy = oy*K-Ko;
+dx = Pf.x - 0.5 + jitter*ox;
+dy = Pf.y - of + jitter*oy;
+vec3 d2 = dx * dx + dy * dy; // d21, d22 and d23, squared
+p = px.z + Pi.y + oi; // p31, p32, p33
+p = (34.0 * p + 1.0) * p;
+p = p - floor(p * (1.0 / 289.0)) * 289.0;
+ox = fract(p*K) - Ko;
+oy = floor(p*K);
+oy = oy - floor(oy * (1.0 / 7.0)) * 7.0;
+oy = oy*K-Ko;
+dx = Pf.x - 1.5 + jitter*ox;
+dy = Pf.y - of + jitter*oy;
+vec3 d3 = dx * dx + dy * dy; // d31, d32 and d33, squared
+// Sort out the two smallest distances (F1, F2)
+vec3 d1a = min(d1, d2);
+d2 = max(d1, d2); // Swap to keep candidates for F2
+d2 = min(d2, d3); // neither F1 nor F2 are now in d3
+d1 = min(d1a, d2); // F1 is now in d1
+d2 = max(d1a, d2); // Swap to keep candidates for F2
+d1.xy = (d1.x < d1.y) ? d1.xy : d1.yx; // Swap if smaller
+d1.xz = (d1.x < d1.z) ? d1.xz : d1.zx; // F1 is in d1.x
+d1.yz = min(d1.yz, d2.yz); // F2 is now not in d2.yz
+d1.y = min(d1.y, d1.z); // nor in  d1.z
+d1.y = min(d1.y, d2.x); // F2 is in d1.y, we're done.
+output0 = vec3(sqrt(d1.xy),0);"
+
+[sub_resource type="VisualShaderNodeVec3Constant" id=11]
+constant = Vector3( 1, 1, 1 )
+
+[sub_resource type="VisualShaderNodeVectorOp" id=12]
+default_input_values = [ 0, Vector3( 0, 0, 0 ), 1, Vector3( 4, 4, 0 ) ]
+operator = 2
+
+[sub_resource type="VisualShaderNodeScalarOp" id=13]
+operator = 1
+
+[sub_resource type="VisualShaderNodeInput" id=14]
+input_name = "vertex"
+
+[sub_resource type="VisualShaderNodeScalarOp" id=15]
+default_input_values = [ 0, 0.0, 1, 1.0 ]
+operator = 7
+
+[sub_resource type="VisualShaderNodeScalarOp" id=16]
+operator = 6
+
+[sub_resource type="VisualShaderNodeScalarOp" id=17]
+default_input_values = [ 0, 0.0, 1, 0.004 ]
+operator = 2
+
+[sub_resource type="VisualShaderNodeScalarOp" id=18]
+default_input_values = [ 0, 0.0, 1, 1.0 ]
+operator = 7
+
+[sub_resource type="VisualShaderNodeVectorDistance" id=19]
+
+[sub_resource type="VisualShaderNodeVec3Constant" id=20]
+
+[sub_resource type="VisualShaderNodeInput" id=21]
+input_name = "uv"
+
+[sub_resource type="VisualShaderNodeScalarConstant" id=22]
+constant = 1.0
+
+[sub_resource type="VisualShaderNodeVectorDecompose" id=23]
+
+[sub_resource type="VisualShaderNodeInput" id=24]
+input_name = "time"
+
+[sub_resource type="VisualShader" id=25]
+code = "shader_type spatial;
+render_mode specular_schlick_ggx, ambient_light_disabled;
+
+
+
+
+void vertex() {
+// Output:0
+
+}
+
+void fragment() {
+// Input:4
+	vec3 n_out4p0 = vec3(UV, 0.0);
+
+// VectorOp:21
+	vec3 n_in21p1 = vec3(4.00000, 4.00000, 0.00000);
+	vec3 n_out21p0 = n_out4p0 * n_in21p1;
+
+// Input:7
+	float n_out7p0 = TIME;
+
+// ScalarOp:14
+	float n_in14p1 = 0.01000;
+	float n_out14p0 = n_out7p0 * n_in14p1;
+
+// VectorOp:13
+	vec3 n_out13p0 = n_out21p0 + vec3(n_out14p0);
+
+// VectorOp:11
+	vec3 n_in11p1 = vec3(4.00000, 4.00000, 4.00000);
+	vec3 n_out11p0 = n_out13p0 * n_in11p1;
+
+// Scalar:5
+	float n_out5p0 = 1.000000;
+
+// ScalarOp:10
+	float n_out10p0 = n_out5p0 + n_out7p0;
+
+// ScalarFunc:12
+	float n_out12p0 = sin(n_out10p0);
+
+// ScalarOp:15
+	float n_in15p1 = 0.50000;
+	float n_out15p0 = n_out12p0 * n_in15p1;
+
+// Expression:2
+	vec3 n_out2p0;
+	n_out2p0 = vec3(0.0, 0.0, 0.0);
+	{
+		vec2 P = vec2(n_out11p0.x,n_out11p0.y);
+		
+		float K = 0.142857142857; // 1/7
+		float Ko = 0.428571428571; // 3/7
+		
+		vec2 Pi = floor(P);
+		Pi = Pi - floor(Pi * (1.0 / 289.0)) * 289.0;
+		vec2 Pf = fract(P);
+		vec3 oi = vec3(-1.0, 0.0, 1.0);
+		vec3 of = vec3(-0.5, 0.5, 1.5);
+		vec3 px = Pi.x + oi;
+		px = (34.0 * px + 1.0) * px;
+		px = px - floor(px * (1.0 / 289.0)) * 289.0;
+		vec3 p = px.x + Pi.y + oi; // p11, p12, p13
+		p = (34.0 * p + 1.0) * p;
+		p = p - floor(p * (1.0 / 289.0)) * 289.0;
+		vec3 ox = fract(p*K) - Ko;
+		vec3 oy = floor(p*K);
+		oy = oy - floor(oy * (1.0 / 7.0)) * 7.0;
+		oy = oy*K-Ko;
+		vec3 dx = Pf.x + 0.5 + n_out15p0*ox;
+		vec3 dy = Pf.y - of + n_out15p0*oy;
+		vec3 d1 = dx * dx + dy * dy; // d11, d12 and d13, squared
+		p = px.y + Pi.y + oi; // p21, p22, p23
+		p = (34.0 * p + 1.0) * p;
+		p = p - floor(p * (1.0 / 289.0)) * 289.0;
+		ox = fract(p*K) - Ko;
+		oy = floor(p*K);
+		oy = oy - floor(oy * (1.0 / 7.0)) * 7.0;
+		oy = oy*K-Ko;
+		dx = Pf.x - 0.5 + n_out15p0*ox;
+		dy = Pf.y - of + n_out15p0*oy;
+		vec3 d2 = dx * dx + dy * dy; // d21, d22 and d23, squared
+		p = px.z + Pi.y + oi; // p31, p32, p33
+		p = (34.0 * p + 1.0) * p;
+		p = p - floor(p * (1.0 / 289.0)) * 289.0;
+		ox = fract(p*K) - Ko;
+		oy = floor(p*K);
+		oy = oy - floor(oy * (1.0 / 7.0)) * 7.0;
+		oy = oy*K-Ko;
+		dx = Pf.x - 1.5 + n_out15p0*ox;
+		dy = Pf.y - of + n_out15p0*oy;
+		vec3 d3 = dx * dx + dy * dy; // d31, d32 and d33, squared
+		// Sort out the two smallest distances (F1, F2)
+		vec3 d1a = min(d1, d2);
+		d2 = max(d1, d2); // Swap to keep candidates for F2
+		d2 = min(d2, d3); // neither F1 nor F2 are now in d3
+		d1 = min(d1a, d2); // F1 is now in d1
+		d2 = max(d1a, d2); // Swap to keep candidates for F2
+		d1.xy = (d1.x < d1.y) ? d1.xy : d1.yx; // Swap if smaller
+		d1.xz = (d1.x < d1.z) ? d1.xz : d1.zx; // F1 is in d1.x
+		d1.yz = min(d1.yz, d2.yz); // F2 is now not in d2.yz
+		d1.y = min(d1.y, d1.z); // nor in  d1.z
+		d1.y = min(d1.y, d2.x); // F2 is in d1.y, we're done.
+		n_out2p0 = vec3(sqrt(d1.xy),0);
+	}
+
+// VectorDecompose:6
+	float n_out6p0 = n_out2p0.x;
+	float n_out6p1 = n_out2p0.y;
+	float n_out6p2 = n_out2p0.z;
+
+// ScalarOp:16
+	float n_in16p1 = 0.50000;
+	float n_out16p0 = max(n_out6p0, n_in16p1);
+
+// ScalarOp:17
+	float n_in17p1 = 0.50000;
+	float n_out17p0 = n_out16p0 - n_in17p1;
+
+// ScalarOp:19
+	float n_in19p1 = 4.00000;
+	float n_out19p0 = n_out17p0 * n_in19p1;
+
+// ScalarOp:28
+	float n_in28p1 = 1.00000;
+	float n_out28p0 = min(n_out19p0, n_in28p1);
+
+// Input:23
+	vec3 n_out23p0 = VERTEX;
+
+// Vector:30
+	vec3 n_out30p0 = vec3(0.000000, 0.000000, 0.000000);
+
+// Distance:29
+	float n_out29p0 = distance(n_out23p0, n_out30p0);
+
+// ScalarOp:27
+	float n_in27p1 = 0.00400;
+	float n_out27p0 = n_out29p0 * n_in27p1;
+
+// ScalarOp:25
+	float n_in25p1 = 1.00000;
+	float n_out25p0 = min(n_out27p0, n_in25p1);
+
+// ScalarOp:22
+	float n_out22p0 = n_out28p0 - n_out25p0;
+
+// ScalarOp:26
+	float n_in26p1 = 0.00000;
+	float n_out26p0 = max(n_out22p0, n_in26p1);
+
+// Vector:20
+	vec3 n_out20p0 = vec3(1.000000, 1.000000, 1.000000);
+
+// Output:0
+	ALPHA = n_out26p0;
+	EMISSION = n_out20p0;
+
+}
+
+void light() {
+// Output:0
+
+}
+"
+graph_offset = Vector2( 1365.13, 127.609 )
+flags/ambient_light_disabled = true
+nodes/fragment/0/position = Vector2( 1920, 160 )
+nodes/fragment/2/node = SubResource( 10 )
+nodes/fragment/2/position = Vector2( -560, 160 )
+nodes/fragment/2/size = Vector2( 855, 1325 )
+nodes/fragment/2/input_ports = "0,1,Pold;1,0,jitter;"
+nodes/fragment/2/output_ports = "0,1,output0;"
+nodes/fragment/2/expression = "vec2 P = vec2(Pold.x,Pold.y);
+
+float K = 0.142857142857; // 1/7
+float Ko = 0.428571428571; // 3/7
+
+vec2 Pi = floor(P);
+Pi = Pi - floor(Pi * (1.0 / 289.0)) * 289.0;
+vec2 Pf = fract(P);
+vec3 oi = vec3(-1.0, 0.0, 1.0);
+vec3 of = vec3(-0.5, 0.5, 1.5);
+vec3 px = Pi.x + oi;
+px = (34.0 * px + 1.0) * px;
+px = px - floor(px * (1.0 / 289.0)) * 289.0;
+vec3 p = px.x + Pi.y + oi; // p11, p12, p13
+p = (34.0 * p + 1.0) * p;
+p = p - floor(p * (1.0 / 289.0)) * 289.0;
+vec3 ox = fract(p*K) - Ko;
+vec3 oy = floor(p*K);
+oy = oy - floor(oy * (1.0 / 7.0)) * 7.0;
+oy = oy*K-Ko;
+vec3 dx = Pf.x + 0.5 + jitter*ox;
+vec3 dy = Pf.y - of + jitter*oy;
+vec3 d1 = dx * dx + dy * dy; // d11, d12 and d13, squared
+p = px.y + Pi.y + oi; // p21, p22, p23
+p = (34.0 * p + 1.0) * p;
+p = p - floor(p * (1.0 / 289.0)) * 289.0;
+ox = fract(p*K) - Ko;
+oy = floor(p*K);
+oy = oy - floor(oy * (1.0 / 7.0)) * 7.0;
+oy = oy*K-Ko;
+dx = Pf.x - 0.5 + jitter*ox;
+dy = Pf.y - of + jitter*oy;
+vec3 d2 = dx * dx + dy * dy; // d21, d22 and d23, squared
+p = px.z + Pi.y + oi; // p31, p32, p33
+p = (34.0 * p + 1.0) * p;
+p = p - floor(p * (1.0 / 289.0)) * 289.0;
+ox = fract(p*K) - Ko;
+oy = floor(p*K);
+oy = oy - floor(oy * (1.0 / 7.0)) * 7.0;
+oy = oy*K-Ko;
+dx = Pf.x - 1.5 + jitter*ox;
+dy = Pf.y - of + jitter*oy;
+vec3 d3 = dx * dx + dy * dy; // d31, d32 and d33, squared
+// Sort out the two smallest distances (F1, F2)
+vec3 d1a = min(d1, d2);
+d2 = max(d1, d2); // Swap to keep candidates for F2
+d2 = min(d2, d3); // neither F1 nor F2 are now in d3
+d1 = min(d1a, d2); // F1 is now in d1
+d2 = max(d1a, d2); // Swap to keep candidates for F2
+d1.xy = (d1.x < d1.y) ? d1.xy : d1.yx; // Swap if smaller
+d1.xz = (d1.x < d1.z) ? d1.xz : d1.zx; // F1 is in d1.x
+d1.yz = min(d1.yz, d2.yz); // F2 is now not in d2.yz
+d1.y = min(d1.y, d1.z); // nor in  d1.z
+d1.y = min(d1.y, d2.x); // F2 is in d1.y, we're done.
+output0 = vec3(sqrt(d1.xy),0);"
+nodes/fragment/4/node = SubResource( 21 )
+nodes/fragment/4/position = Vector2( -1440, 180 )
+nodes/fragment/5/node = SubResource( 22 )
+nodes/fragment/5/position = Vector2( -1700, 280 )
+nodes/fragment/6/node = SubResource( 23 )
+nodes/fragment/6/position = Vector2( 380, 160 )
+nodes/fragment/7/node = SubResource( 24 )
+nodes/fragment/7/position = Vector2( -1700, 360 )
+nodes/fragment/10/node = SubResource( 1 )
+nodes/fragment/10/position = Vector2( -1300, 280 )
+nodes/fragment/11/node = SubResource( 2 )
+nodes/fragment/11/position = Vector2( -880, 160 )
+nodes/fragment/12/node = SubResource( 3 )
+nodes/fragment/12/position = Vector2( -1120, 280 )
+nodes/fragment/13/node = SubResource( 4 )
+nodes/fragment/13/position = Vector2( -1081, 136 )
+nodes/fragment/14/node = SubResource( 5 )
+nodes/fragment/14/position = Vector2( -1500, 280 )
+nodes/fragment/15/node = SubResource( 6 )
+nodes/fragment/15/position = Vector2( -880, 280 )
+nodes/fragment/16/node = SubResource( 7 )
+nodes/fragment/16/position = Vector2( 620, 140 )
+nodes/fragment/17/node = SubResource( 8 )
+nodes/fragment/17/position = Vector2( 800, 160 )
+nodes/fragment/19/node = SubResource( 9 )
+nodes/fragment/19/position = Vector2( 980, 180 )
+nodes/fragment/20/node = SubResource( 11 )
+nodes/fragment/20/position = Vector2( 860, 40 )
+nodes/fragment/21/node = SubResource( 12 )
+nodes/fragment/21/position = Vector2( -1280, 120 )
+nodes/fragment/22/node = SubResource( 13 )
+nodes/fragment/22/position = Vector2( 1460, 180 )
+nodes/fragment/23/node = SubResource( 14 )
+nodes/fragment/23/position = Vector2( 500, 340 )
+nodes/fragment/25/node = SubResource( 15 )
+nodes/fragment/25/position = Vector2( 1200, 340 )
+nodes/fragment/26/node = SubResource( 16 )
+nodes/fragment/26/position = Vector2( 1640, 180 )
+nodes/fragment/27/node = SubResource( 17 )
+nodes/fragment/27/position = Vector2( 1034.13, 351.609 )
+nodes/fragment/28/node = SubResource( 18 )
+nodes/fragment/28/position = Vector2( 1220, 180 )
+nodes/fragment/29/node = SubResource( 19 )
+nodes/fragment/29/position = Vector2( 800, 400 )
+nodes/fragment/30/node = SubResource( 20 )
+nodes/fragment/30/position = Vector2( 360, 480 )
+nodes/fragment/connections = PoolIntArray( 2, 0, 6, 0, 11, 0, 2, 0, 5, 0, 10, 0, 7, 0, 10, 1, 10, 0, 12, 0, 14, 0, 13, 1, 13, 0, 11, 0, 7, 0, 14, 0, 12, 0, 15, 0, 15, 0, 2, 1, 6, 0, 16, 0, 16, 0, 17, 0, 17, 0, 19, 0, 20, 0, 0, 5, 4, 0, 21, 0, 21, 0, 13, 0, 25, 0, 22, 1, 22, 0, 26, 0, 26, 0, 0, 1, 27, 0, 25, 0, 19, 0, 28, 0, 28, 0, 22, 0, 23, 0, 29, 0, 30, 0, 29, 1, 29, 0, 27, 0 )
+
+[resource]
+shader = SubResource( 25 )

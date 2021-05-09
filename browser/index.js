@@ -12,7 +12,7 @@ var connections = []
 var start_id = null
 
 app.ws('/api', (ws, req) => {
-    if ((connections.length >= 4 && !req.query.type == "host")|| start_id != null) return;
+    if ((connections.length >= 4 && !req.query.type == "host")/*|| start_id != null*/) return;
 
     var id = uuidv4();
     var index = connections.length
@@ -28,7 +28,8 @@ app.ws('/api', (ws, req) => {
         conn.ws != ws
     ).forEach(conn => {
         conn.ws.send(JSON.stringify({
-            "type": "player_join"
+            "type": "player_join",
+            id
         }));
     });
 
@@ -53,7 +54,7 @@ app.ws('/api', (ws, req) => {
         } else if (parse.type == "get_color") {
             ws.send(JSON.stringify({
                 type: "color",
-                color: index
+                color: index - (start_id == null ? 0 : 1)
             }))
         }
     });
